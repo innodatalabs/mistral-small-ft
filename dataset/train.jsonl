@@ -1,0 +1,1 @@
+{"id": "1", "messages": [{"role": "user", "content": [{"type": "text", "text": "What is the title of the following document?"}, {"type": "image", "image": "document1.png"}]}], "expected": "Obligation to provide information"}
