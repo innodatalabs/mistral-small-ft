@@ -62,7 +62,7 @@ def predict(*, processor, model, test_dataset, output_name, images_dir=None, lim
 
             o.write(json.dumps({
                 **out,
-                'expected': expected,
+                'actual': actual,
             }) + '\n')
 
 
