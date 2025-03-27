@@ -83,7 +83,7 @@ if __name__ == '__main__':
 
     model, processor = load_lora(model_path=args.model_path, token=os.environ['HF_TOKEN'])
 
-    output_name = os.path.basename(args.model_path) + '.jsonl'
+    output_name = os.path.basename(args.model_path.rstrip('/')) + '.jsonl'
 
     predict(
         model=model,

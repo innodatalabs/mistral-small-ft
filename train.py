@@ -122,6 +122,12 @@ def train():
 
     model.config.vision_lr = training_args.vision_lr
 
+    data_module = make_supervised_data_module(
+        processor=processor,
+        dataset=data_args.dataset,
+        images_dir=data_args.images_dir,
+    )
+
     trainer = FinetuneTrainer(
         model=model,
         args=training_args,
