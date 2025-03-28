@@ -24,4 +24,5 @@ PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python -m train \
     --save_strategy "steps" \
     --save_steps 1000 \
     --save_total_limit 5 \
-    --dataloader_num_workers 4
+    --dataloader_num_workers 4 \
+    --seed 42
