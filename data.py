@@ -107,8 +107,6 @@ class SupervisedDataset(Dataset):
         item = dict(
             input_ids=input_ids,
             labels=labels,
-            pixel_values=inputs['pixel_values'].to(torch.bfloat16),
-            image_sizes=inputs['image_sizes'],
         )
         pixel_values = inputs.get('pixel_values')
         if pixel_values is not None:
