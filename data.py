@@ -86,7 +86,7 @@ class SupervisedDataset(Dataset):
         processor = self.processor
 
         prompt = processor.apply_chat_template(messages, add_generation_prompt=True)
-        inputs = processor(text=prompt, images=[images], return_tensors='pt')
+        inputs = processor(text=prompt, images=images if len(images) > 0 else None, return_tensors='pt')
         prompt_ids = inputs['input_ids']
 
         expected_ids = processor.tokenizer(expected,
