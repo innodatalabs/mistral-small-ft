@@ -1,4 +1,3 @@
-import copy
 import os
 from dataclasses import dataclass, field
 from typing import Dict
@@ -112,6 +111,7 @@ class SupervisedDataset(Dataset):
         if pixel_values is not None:
             item['pixel_values'] = pixel_values.to(torch.bfloat16)
             item['image_sizes'] = inputs['image_sizes']
+
         return item
 
 class DataCollatorForSupervisedDataset(object):
