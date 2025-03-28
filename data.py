@@ -85,7 +85,7 @@ class SupervisedDataset(Dataset):
         processor = self.processor
 
         prompt = processor.apply_chat_template(messages, add_generation_prompt=True)
-        inputs = processor(text=prompt, images=[images], return_tensors='pt')
+        inputs = processor(text=prompt, images=images if len(images) > 0 else None, return_tensors='pt')
         prompt_ids = inputs['input_ids']
 
         expected_ids = processor.tokenizer(expected,
@@ -99,25 +99,20 @@ class SupervisedDataset(Dataset):
             ],
             dim=0,
         )
-        
+
         input_ids = torch.cat([input_ids, torch.tensor([self.eos_token_id])], dim=0).to(torch.long)
         labels = torch.cat([labels, torch.tensor([self.eos_token_id])], dim=0).to(torch.long)
 
-        return dict(
+        item = dict(
             input_ids=input_ids,
             labels=labels,
-            pixel_values=inputs['pixel_values'].to(torch.bfloat16),
-            image_sizes=inputs['image_sizes'],
         )
-<<<<<<< Updated upstream
-=======
         pixel_values = inputs.get('pixel_values')
         if pixel_values is not None:
             item['pixel_values'] = pixel_values.to(torch.bfloat16)
             item['image_sizes'] = inputs['image_sizes']
 
         return item
->>>>>>> Stashed changes
 
 class DataCollatorForSupervisedDataset(object):
     """Collate examples for supervised fine-tuning."""
@@ -134,26 +129,27 @@ class DataCollatorForSupervisedDataset(object):
         for example in examples:
             batch_input_ids.append(example["input_ids"])
             batch_label_ids.append(example["labels"])
-            batch_pixel_values.append(example["pixel_values"])
-            batch_image_sizes.append(example["image_sizes"])
-        
+            if 'pixel_values' in example:
+                batch_pixel_values.append(example["pixel_values"])
+                batch_image_sizes.append(example["image_sizes"])
+
         input_ids = pad_sequence(
             batch_input_ids, padding_side='right', padding_value=self.pad_token_id
         )
 
         attention_mask = input_ids != self.pad_token_id
         labels = pad_sequence(batch_label_ids, padding_side='right', padding_value=IGNORE_INDEX)
-        
-        pixel_values = torch.cat(batch_pixel_values, dim=0)
-        image_sizes = torch.cat(batch_image_sizes, dim=0)
-        
-        return {
+
+        item = {
             "input_ids": input_ids,
             "attention_mask": attention_mask,
             "labels": labels,
-            "pixel_values": pixel_values,
-            "image_sizes": image_sizes,
         }
+        if len(batch_pixel_values) > 0:
+            item['pixel_values'] = torch.cat(batch_pixel_values, dim=0)
+            item['image_sizes'] = torch.cat(batch_image_sizes, dim=0)
+
+        return item
 
 def make_supervised_data_module(processor, dataset, images_dir=None, adapter=None):
     """Make dataset and collator for supervised fine-tuning."""
