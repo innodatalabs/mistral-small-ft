@@ -1,0 +1,60 @@
+
+@import "tailwindcss";
+
+html {
+  font-family: Arial;
+  font-size: 120%;
+  margin: 0;
+}
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+#app {
+    overflow: hidden;
+    height: 100%;
+    padding: 0;
+  }
+
+.removed {
+  background-color: lightcoral;
+}
+.added {
+  background-color: lightgreen;
+}
+.list {
+  height: 50vh;
+  overflow-y: scroll;
+}
+.img {
+  background-color: lightblue;
+  overflow-y: scroll;
+  height: 70vh;
+}
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  height: 100vh;
+  width: auto;
+}
+a {
+  cursor: pointer;
+}
+a svg {
+  width: 1em;
+}
+.header {
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+.image:hover {
+  color: rgba(0, 0, 139, 0.9);
+}
+button.image {
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  color: blue;
+}

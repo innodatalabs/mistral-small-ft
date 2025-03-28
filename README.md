@@ -30,6 +30,7 @@ dataset/
 ```
 
 JSONL record format:
+
 ```json
 {
     "messages": [
@@ -63,6 +64,7 @@ This creates a unique folder inside `output/` with the trained model.
 ```bash
 HF_TOKEN=<your-HF-token> python -m predict dataset/test.jsonl output/<name-of-the-trained-model>
 ```
+
 Testing will create JSONL file in current directory with the name `<name-of-the-trained-model>.jsonl`.
 
 Content is a set of records in JSONL format. Each record is same as test.jsonl record, with the added
@@ -84,3 +86,7 @@ python -m merge_lora_weights <name-of-the-trained-model> <output-dir>
 ```
 
 This command will create in `<output-dir>` new Mistral-like model, that can be loaded using `AutoModelForImageTextToText.from_pretrained` (without `peft` magic). Useful for production.
+
+## Using web UI to review data or prediction results
+
+See [UI.md](UI.md)

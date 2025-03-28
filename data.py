@@ -1,4 +1,3 @@
-import copy
 import os
 from dataclasses import dataclass, field
 from typing import Dict
@@ -110,6 +109,15 @@ class SupervisedDataset(Dataset):
             pixel_values=inputs['pixel_values'].to(torch.bfloat16),
             image_sizes=inputs['image_sizes'],
         )
+<<<<<<< Updated upstream
+=======
+        pixel_values = inputs.get('pixel_values')
+        if pixel_values is not None:
+            item['pixel_values'] = pixel_values.to(torch.bfloat16)
+            item['image_sizes'] = inputs['image_sizes']
+
+        return item
+>>>>>>> Stashed changes
 
 class DataCollatorForSupervisedDataset(object):
     """Collate examples for supervised fine-tuning."""
