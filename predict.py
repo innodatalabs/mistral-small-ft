@@ -70,8 +70,8 @@ if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('model_path', help='path to trained model (or HF model name)')
     parser.add_argument('test_dataset', help='dataset to use for prediction')
+    parser.add_argument('model_path', help='path to trained model (or HF model name)')
     parser.add_argument('--max_new_tokens', type=int, default=300, help='max_new_tokens parameter, passed to generator (default 300)')
     parser.add_argument('--limit', type=int, default=200, help='limit number of records (default 200)')
 
