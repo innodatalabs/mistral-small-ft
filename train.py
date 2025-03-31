@@ -74,7 +74,6 @@ def train():
 
     model = AutoModelForImageTextToText.from_pretrained(
         model_args.model_id,
-        trust_remote_code=True,
         torch_dtype=torch.bfloat16,
         device_map='cpu',
         tie_word_embeddings=False,
@@ -111,7 +110,6 @@ def train():
 
     processor = AutoProcessor.from_pretrained(
         model_args.model_id,
-        trust_remote_code=True,
         torch_dtype=compute_dtype,
         device_map=training_args.device,
         token=token,
