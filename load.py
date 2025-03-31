@@ -8,10 +8,10 @@ import json
 # This code is borrowed from Molmo-Finetune
 def load_lora(model_path, token=None):
     model_base = get_model_base(model_path)
-    processor = AutoProcessor.from_pretrained(model_base, trust_remote_code=True, token=token)
+    processor = AutoProcessor.from_pretrained(model_base, token=token)
     print('Loading base model...', model_base)
     model = AutoModelForImageTextToText.from_pretrained(model_base,
-        low_cpu_mem_usage=True, trust_remote_code=True, device_map='auto',
+        low_cpu_mem_usage=True, device_map='auto',
         torch_dtype=torch.bfloat16, token=token, tie_word_embeddings=False)
 
     print('Loading LoRA weights...')
