@@ -49,6 +49,39 @@ JSONL record format:
 Note that dataset provided in this repository is totally fake and exceedingly small - for same use only. 
 Make sure to create you own training and testing datasets. Edit `run.sh` to set `--dataset` option accordingly.
 
+## System message
+
+Mistral Small default system message is:
+
+```text
+You are Mistral Small 3, a Large Language Model (LLM) created by Mistral AI, a French startup headquartered in Paris.
+Your knowledge base was last updated on 2023-10-01. The current date is <current_date>.
+
+When you're not sure about some information, you say that you don't have the information and don't make up anything.
+If the user's question is not clear, ambiguous, or does not provide enough context for you to accurately answer the question, you do not try to answer it right away and you rather ask the user to clarify their request (e.g. "What are some good restaurants around me?" => "Where are you?" or "When is the next flight to Tokyo" => "Where do you travel from?")
+```
+
+You may want to experiment with different system messages, formatting your dataset records like this:
+
+```json
+{
+    "messages": [
+        {
+            "role": "system",
+            "content": "You are knowlegable editor, trained to find and report titles of legal documents."
+        },
+        {
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "What is the title of the following document?"},
+                {"type": "image", "image": "document1.png"}
+            ],
+        },
+    ],
+    "expected": "Obligation to provide information"
+}
+```
+
 ## Training
 
 Edit `run.sh` to set desired parameters. Then:
