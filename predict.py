@@ -41,11 +41,14 @@ def predict(*, processor, model, test_dataset, output_name, images_dir=None, lim
                             fname = os.path.join(images_dir, x['image'])
                             x['image'] = 'image'
                             images.append(Image.open(fname).convert('RGB'))
+            if len(images) == 0:
+                images = None
 
             expected = datum['expected']
             prompt = processor.apply_chat_template(messages, add_generation_prompt=True)
             inputs = processor(text=prompt, images=images, return_tensors='pt').to(model.device)
-            inputs['pixel_values'] = inputs['pixel_values'].to(torch.bfloat16)
+            if 'pixel_values' in inputs:
+                inputs['pixel_values'] = inputs['pixel_values'].to(torch.bfloat16)
             prompt_len = inputs['input_ids'].shape[1]
 
             with torch.no_grad():
