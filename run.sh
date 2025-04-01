@@ -20,7 +20,7 @@ PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python -m train \
     --lr_scheduler_type "cosine" \
     --logging_steps 1 \
     --tf32 True \
-    --gradient_checkpointing False \
+    --gradient_checkpointing True \
     --save_strategy "steps" \
     --save_steps 1000 \
     --save_total_limit 5 \

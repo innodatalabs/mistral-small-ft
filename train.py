@@ -84,7 +84,9 @@ def train():
     configure_vision_tower(model, training_args, compute_dtype, training_args.device)
 
     model.config.use_cache = False
-
+    if training_args.gradient_checkpointing:
+        model.gradient_checkpointing_enable()
+        
     peft_config = LoraConfig(
         r=training_args.lora_rank,
         lora_alpha=training_args.lora_alpha,
