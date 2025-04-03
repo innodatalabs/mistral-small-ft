@@ -2,8 +2,6 @@ from transformers import AutoProcessor, AutoConfig, AutoModelForImageTextToText
 import torch
 import json
 from PIL import Image
-from load import load_lora
-from peft import PeftModel
 import os
 import copy
 
@@ -71,6 +69,7 @@ def predict(*, processor, model, test_dataset, output_name, images_dir=None, lim
 
 if __name__ == '__main__':
     import argparse
+    from merge_lora_weights import get_model_base
 
     parser = argparse.ArgumentParser()
     parser.add_argument('test_dataset', help='dataset to use for prediction')
@@ -80,11 +79,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    # model_base = 'mistralai/Mistral-Small-3.1-24B-Instruct-2503'
-    # processor = AutoProcessor.from_pretrained(model_base, trust_remote_code=True, torch_dtype='auto', device_map='auto')
-    # model = AutoModelForImageTextToText.from_pretrained(model_base, trust_remote_code=True, torch_dtype=torch.bfloat16, device_map='auto')
-
-    model, processor = load_lora(model_path=args.model_path, token=os.environ['HF_TOKEN'])
+    processor = AutoProcessor.from_pretrained(get_model_base(args.model_path), torch_dtype=torch.bfloat16, device_map='auto')
+    model = AutoModelForImageTextToText.from_pretrained(args.model_path, torch_dtype=torch.bfloat16, device_map='auto')
 
     output_name = os.path.basename(args.model_path.rstrip('/')) + '.jsonl'
 
@@ -96,7 +92,4 @@ if __name__ == '__main__':
         limit=args.limit,
         max_new_tokens=args.max_new_tokens,
     )
-
-    # dataset = '../Molmo-Finetune/dataset20250306.train'
-    # PROMPT = 'What is the title of this document? Your response must be just the title. Do not include any extra text, quotes or markdown formatting.'
 

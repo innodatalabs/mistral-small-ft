@@ -1,13 +1,9 @@
 import os
 import torch
 from peft import LoraConfig, get_peft_model
-import ast
-from transformers import AutoProcessor, AutoModelForImageTextToText, HfArgumentParser
-from trainer import FinetuneTrainer
+from transformers import AutoProcessor, AutoModelForImageTextToText, HfArgumentParser, set_seed, Trainer
 from data import make_supervised_data_module
 from params import DataArguments, ModelArguments, TrainingArguments
-import pathlib
-from trainer import get_peft_state
 from duoname import duoname
 import secrets
 
@@ -57,7 +53,7 @@ def configure_vision_tower(model, training_args, compute_dtype, device):
 def train():
     token = os.environ['HF_TOKEN']
     parser = HfArgumentParser( (ModelArguments, DataArguments, TrainingArguments) )
-    
+
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
     training_args.label_names = ['labels']
     if training_args.output_dir is None:
@@ -68,7 +64,10 @@ def train():
     if not training_args.vision_lora:
         lora_namespan_exclude += ["vision_tower"]
     if not training_args.train_projector:
-        lora_namespan_exclude += ['multi_modal_projector', 'embed_tokens']
+        lora_namespan_exclude += ['multi_modal_projector', 'embed_tokens', 'lm_head']
+
+    if training_args.seed is not None:
+        set_seed(training_args.seed)
 
     compute_dtype = torch.bfloat16
 
@@ -76,7 +75,7 @@ def train():
         model_args.model_id,
         torch_dtype=torch.bfloat16,
         device_map='cpu',
-        tie_word_embeddings=False,
+        tie_word_embeddings=True,
         token=token,
     )
 
@@ -86,7 +85,7 @@ def train():
     model.config.use_cache = False
     if training_args.gradient_checkpointing:
         model.gradient_checkpointing_enable()
-        
+
     peft_config = LoraConfig(
         r=training_args.lora_rank,
         lora_alpha=training_args.lora_alpha,
@@ -128,7 +127,7 @@ def train():
         images_dir=data_args.images_dir,
     )
 
-    trainer = FinetuneTrainer(
+    trainer = Trainer(
         model=model,
         args=training_args,
         **data_module
@@ -139,12 +138,7 @@ def train():
     trainer.train()
     trainer.save_state()
 
-    model.config.use_cache = True
-    
-    state_dict = get_peft_state(model.named_parameters())
-
-    model.config.save_pretrained(training_args.output_dir)
-    model.save_pretrained(training_args.output_dir, state_dict=state_dict)
+    model.save_pretrained(training_args.output_dir)
     print(f'Model saved to {training_args.output_dir}')
 
 if __name__ == "__main__":
