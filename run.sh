@@ -2,9 +2,9 @@ PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python -m train \
     --lora_rank 16 \
     --lora_alpha 32 \
     --lora_dropout 0.05 \
-    --num_lora_modules 100 \
-    --lora_modules_truncate_tail True \
-    --lora_modules_truncate_offset 100 \
+    --num_lora_modules 0 \
+    --lora_modules_truncate_tail False \
+    --lora_modules_truncate_offset 0 \
     --freeze_vision_tower True \
     --dataset dataset/train.jsonl \
     --output_dir output \
@@ -24,5 +24,6 @@ PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python -m train \
     --save_strategy "steps" \
     --save_steps 1000 \
     --save_total_limit 5 \
+    --save_only_model True \
     --dataloader_num_workers 4 \
     --seed 42

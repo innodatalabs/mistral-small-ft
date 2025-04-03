@@ -1,10 +1,9 @@
 import os
 import torch
 from peft import LoraConfig, get_peft_model
-from transformers import AutoProcessor, AutoModelForImageTextToText, HfArgumentParser, Trainer
+from transformers import AutoProcessor, AutoModelForImageTextToText, HfArgumentParser, set_seed, Trainer
 from data import make_supervised_data_module
 from params import DataArguments, ModelArguments, TrainingArguments
-from trainer import get_peft_state
 from duoname import duoname
 import secrets
 
@@ -67,13 +66,16 @@ def train():
     if not training_args.train_projector:
         lora_namespan_exclude += ['multi_modal_projector', 'embed_tokens', 'lm_head']
 
+    if training_args.seed is not None:
+        set_seed(training_args.seed)
+
     compute_dtype = torch.bfloat16
 
     model = AutoModelForImageTextToText.from_pretrained(
         model_args.model_id,
         torch_dtype=torch.bfloat16,
         device_map='cpu',
-        tie_word_embeddings=False,
+        tie_word_embeddings=True,
         token=token,
     )
 
@@ -136,12 +138,7 @@ def train():
     trainer.train()
     trainer.save_state()
 
-    model.config.use_cache = False
-
-    state_dict = get_peft_state(model.named_parameters())
-
-    model.config.save_pretrained(training_args.output_dir)
-    model.save_pretrained(training_args.output_dir, state_dict=state_dict)
+    model.save_pretrained(training_args.output_dir)
     print(f'Model saved to {training_args.output_dir}')
 
 if __name__ == "__main__":
