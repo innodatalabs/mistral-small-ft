@@ -69,7 +69,6 @@ def predict(*, processor, model, test_dataset, output_name, images_dir=None, lim
 
 if __name__ == '__main__':
     import argparse
-    from adapter import adapter
     from merge_lora_weights import get_model_base
 
     parser = argparse.ArgumentParser()
@@ -92,6 +91,5 @@ if __name__ == '__main__':
         output_name=output_name,
         limit=args.limit,
         max_new_tokens=args.max_new_tokens,
-        adapter=adapter,
     )
 
